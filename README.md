@@ -12,3 +12,11 @@ Finally, we could create a representative portfolio for aggregated positions of 
 # Data sources
 Robintrack.net gives us the hour-by-hour number of users that own any particular stock at any given time, up to Aug 2020.
 The data used for this project can be downloaded from https://robintrack.net/data-download.
+
+# Repository overview
+The file ```moment_calculation.py``` has methods to calculate summary statistics on returns that are of interest for Risk management
+(the standard deviation of returns, the Hill estimator, the VaR).
+
+# Run instructions
+The raw dataset used, exported from https://robintrack.net/data-download, should be available in this repository. Alternatively, you can download it 
+again from this link, and put it in a folder named "popularity_export", in the same repository as the code.
