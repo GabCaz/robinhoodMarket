@@ -1,24 +1,60 @@
-''' This file contains functins used to construct the dataset. The only manual step you need to perform is '''
-import os
+''' This file contains functions used to construct the dataset. The only manual step you need to perform is '''
+import glob, os
 import datetime as dt
 import pandas as pd
 import pandas_datareader.data as web
-import pickle
+# import pickle
 
-def merged_daily_usage_data(reload=False):
+ROOT_DIR = os.path.dirname(os.path.abspath("moment_calculation.py")) # project root directory
+
+def get_available_tickers(path="popularity_export/"):
     '''
+    :param path: where you need to put all the Robinhood data files in this directory
+    :return: a list with all the available tickers
+    '''
+    # move to the directory where the files are if you are not there yet
+    if os.getcwd()[-15:] != path[-16:-1]:
+        os.chdir(ROOT_DIR)
+        os.chdir(path)
+    files = []
+    for file in glob.glob("*.csv"):
+        files.append(file)
+    return files
+
+def merged_daily_usage_data(tickers, reload=False,
+                            path="aggregated_daily_data/",
+                            file_name='aggregated_daily_robinhood_holdings.csv'):
+    '''
+    Return a dataframe with concatenated Robinhood popularity data, either from a previously saved csv file in the
+    given apath/file_name, or by reconstructing it (if not found or reload=True)
+    :param tickers: the tickers of the stocks to aggregate into the dataframe
     :param reload: whether to reload all the data from raw dataframes or use an already saved merged data frame
     :return: a merged dataframe with the daily usage data for all available stocks on Robinhood
     '''
-
-def get_robinhood_portfolio(num_df, price_df, date=dt.datetime.now()):
-    '''
-    :param date: the date you want to know the portfolio for
-    :param num_df: a dataframe where columns are tickers, indices are dates, and values ore number of shares in portfolio
-    :param  price_df:  a dataframe where columns are the same tickers, indices are dates, and values ore the prices of shares
-    :return:
-    '''
-
+    # move to the folder where you may have constructed the dataset already
+    os.chdir(ROOT_DIR)
+    if (not os.path.exists(path)):
+        os.mkdir(path)
+    os.chdir(path)
+    # if the file does not already exist or you want to reload it, recreate the file by merging all stock data
+    if (not os.path.exists(file_name) or reload):
+        data = pd.read_csv(tickers[0])
+        data['timestamp'] = pd.to_datetime(data['timestamp']).dt.date
+        data = data.drop_duplicates(['timestamp'], keep='last')  # keep EoD data to study macroscopic effects
+        data.columns = ['timestamp', tickers[0][:-4]]
+        data.set_index(['timestamp'], inplace=True)
+        for t in tickers[1:]:
+            this_stock = pd.read_csv(t)
+            this_stock['timestamp'] = pd.to_datetime(this_stock['timestamp']).dt.date
+            this_stock = this_stock.drop_duplicates(['timestamp'],
+                                                    keep='last')  # keep EoD data to study macroscopic effects
+            this_stock.columns = ['timestamp', t]
+            this_stock.set_index(['timestamp'], inplace=True)
+            data = data.join(this_stock, how='outer')
+    # if we already have created this file, just return it
+    else:
+        data = pd.read_csv(file_name, parse_dates=True, index_col=['timestamp'])
+    return data
 
 def get_price_data(tickers,
                    start=dt.datetime(2018, 1, 1),
