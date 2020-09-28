@@ -3,7 +3,7 @@ This file allows to get summary statistics about the Robinhood portfolio and mar
 see what are the most popular shares on Robinhood at any given moment, and to see what is the cap-weighted
 '''
 from dataset import *
-import matplotlib.pyplot as plt
+from project_parameter import *
 
 def most_popular_stocks(robinhood_popularity, date=dt.datetime(2020, 8, 13), make_plot=True,
                         num=15):
@@ -17,11 +17,9 @@ def most_popular_stocks(robinhood_popularity, date=dt.datetime(2020, 8, 13), mak
     shares_held = robinhood_popularity.loc[date, :].sort_values(ascending=False).dropna()
     relative_popularity = shares_held / shares_held.sum()
     if make_plot:
-        relative_popularity[:num][::-1].plot(kind='barh', figsize=(num / 2, num * 2 / 3),
-                                       title="{} most popular stocks on Robinhood on {}".format(num, str(date.date)[:-9]))
+        relative_popularity[:num][::-1].plot(kind='barh', figsize=(num / 2, num * 2 / 3), colormap=cmap,
+                                       title="{} most popular stocks on Robinhood on {}".format(num, str(date)[:-9]))
     return relative_popularity
-
-
 
 def get_robinhood_portfolio(num_df, price_df, date=dt.datetime(2020, 8, 13)):
     '''
