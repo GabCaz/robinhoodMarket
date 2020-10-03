@@ -112,7 +112,6 @@ def compile_price_data(tickers, title_ext, path="aggregated_daily_data/", reload
                 print("Error for {}: {}.".format(ticker, e))
             print(main_df.head())
             main_df.to_csv(file_name)
-        return main_df
     data = pd.read_csv(file_name, parse_dates=True, index_col=['Date'])
     return data
 

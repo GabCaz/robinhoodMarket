@@ -62,7 +62,10 @@ def hill_estimator(returns, perc=0.95, make_pct=True):
 
 def plot_vol(return_df, popularity_df, make_pct=True):
     '''
-    :param returns: 1D np array of doubles
+    :param return_df: a dataframe of returns (each column corresponding to a stock, wach row to a date)
+        for which we want to plot volatility data
+    :param popularity_df: a dataframe of popularity (each value is an int proxy of the level of attention a stock
+        receives on Robinhood), dates in row labels, stocks are columns
     :param make_pct:
     '''
     dates = return_df.index
