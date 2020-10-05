@@ -111,8 +111,7 @@ def compile_price_data(tickers, title_ext, path="aggregated_daily_data/", reload
                     print(count)
             except Exception as e:
                 print("Error for {}: {}.".format(ticker, e))
-            print(main_df.head())
-            main_df.to_csv(file_name)
+        main_df.to_csv(file_name)
     data = pd.read_csv(file_name, parse_dates=True, index_col=['Date'])
     return data
 
