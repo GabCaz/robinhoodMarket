@@ -5,7 +5,7 @@ see what are the most popular shares on Robinhood at any given moment, and to se
 from dataset import *
 from project_parameter import *
 
-def most_popular_stocks(robinhood_popularity, date=dt.datetime(2020, 8, 13), make_plot=True,
+def most_popular_stocks(robinhood_popularity, date=dt.date(2020, 8, 13), make_plot=True,
                         num=15):
     '''
     :param robinhood_popularity: a dataframe with shares held by users
@@ -21,11 +21,17 @@ def most_popular_stocks(robinhood_popularity, date=dt.datetime(2020, 8, 13), mak
                                        title="{} most popular stocks on Robinhood on {}".format(num, str(date)[:-9]))
     return relative_popularity
 
-def get_robinhood_portfolio(num_df, price_df, date=dt.datetime(2020, 8, 13)):
+def get_robinhood_portfolio(num_df, price_dir='stock_dfs',
+                            start=dt.date(2018, 1, 1),
+                            end=dt.date(2020, 8, 13)):
     '''
     :param date: the date you want to know the portfolio for. By default the last date data is available for
     :param num_df: a dataframe where columns are tickers, indices are dates, and values ore number of shares in portfolio
-    :param  price_df:  a dataframe where columns are the same tickers, indices are dates, and values ore the prices of shares
-    :return:
+    :param  price_dir: a directory where, for each ticker in the columns of num_df, there exists a file named <TICKER>.csv,
+        which contains price data corresponding to that ticker
+    :return: a tuple,
+        a DataFrame containing the cap-weights of the portfolio, for each share
+        a DataFrame containing the performance of the portfolio, normalized to value 1 at time 0
     '''
-    
+    for ticker in num_df.index:
+        pass

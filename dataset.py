@@ -53,6 +53,7 @@ def merged_daily_usage_data(tickers, reload=False,
     # load and return the merged dataset
     data = pd.read_csv(file_name, parse_dates=True, index_col=['timestamp'])
     data.columns = data.columns.str.replace(".csv", "")
+    data.index = [d.date() for d in data.index] # convert to date object
     return data
 
 def get_price_data(tickers,
