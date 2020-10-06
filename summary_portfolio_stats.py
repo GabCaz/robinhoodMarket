@@ -18,7 +18,7 @@ def most_popular_stocks(robinhood_popularity, date=dt.date(2020, 8, 13), make_pl
     relative_popularity = shares_held / shares_held.sum()
     if make_plot:
         relative_popularity[:num][::-1].plot(kind='barh', figsize=(num / 2, num * 2 / 3), colormap=cmap,
-                                       title="{} most popular stocks on Robinhood on {}".format(num, str(date)[:-9]))
+                                       title="{} most popular stocks on Robinhood on {}".format(num, str(date)))
     return relative_popularity
 
 def get_robinhood_portfolio(num_df, price_dir='stock_dfs',
