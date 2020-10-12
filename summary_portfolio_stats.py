@@ -32,8 +32,8 @@ def get_robinhood_portfolio(num_df, price_df,
         a DataFrame containing the performance of the portfolio, normalized to value 1 at time 0
     '''
     # First, let us make a dataframe with the dollar holdings in each security
-    mask = (price_df.index > start) & (price_df.index <= end)
-    price_df = price_df.loc[mask, :]
+    mask_price = (price_df.index > start) & (price_df.index <= end)
+    price_df = price_df.loc[mask_price, :]
     dollar_holdings = pd.DataFrame().reindex_like(price_df)
     for ticker in price_df.columns:
         try:
@@ -41,35 +41,31 @@ def get_robinhood_portfolio(num_df, price_df,
             price_series = price_df.loc[:, ticker]
             dollar_holding = holdings * price_series.reindex(holdings.index)
             dollar_holdings[ticker] = dollar_holding
-        # if dollar_holdings.empty:
-        #     dollar_holdings = dollar_holding
-        # else:
-        #     dollar_holdings = dollar_holdings.join(dollar_holdings, how='outer')
         except Exception as e:
             print("Error for {}: {}.".format(ticker, e))
     portfolio_index = dollar_holdings.sum(axis=1)
     portfolio_weights = dollar_holdings.div(portfolio_index, axis=0)
     return dollar_holdings, portfolio_weights
 
-# main
-# tickers = get_available_tickers()
-# all_robinhood_prices = compile_price_data([t[:-4] for t in tickers], title_ext='all_robinhood_stocks')
-# robinhood_popularity = merged_daily_usage_data(tickers)
-# time_0_shares = robinhood_popularity.iloc[0, :].fillna(0)
-# total_shares = time_0_shares.sum()
-# missing_nb = 0
-# missing_shares = []
-# for i in range(len(time_0_shares)):
-#     ticker = time_0_shares.index[i]
-#     if (not ticker in all_robinhood_prices.columns):
-#         missing_nb += time_0_shares.iloc[i]
-#         missing_shares.append(ticker)
-# print("We have data for {} % of the shares.".format(100 - 100 * missing_nb / total_shares))
-# print('The missing shares are {}.'.format(missing_shares))
-# all_robinhood_prices = all_robinhood_prices.fillna(method='ffill')
-# all_robinhood_prices.fillna(all_robinhood_prices.mean(), inplace=True)
-# robinhood_popularity.fillna(0, inplace=True)
-# assert(not robinhood_popularity.isna().any().any())
-# assert(not all_robinhood_prices.isna().any().any())
-# dol_holdings, robinhood_weights = get_robinhood_portfolio(num_df=robinhood_popularity, price_df=all_robinhood_prices)
-# print(robinhood_weights)
+def get_portolio_return(weight_df, ret_df,
+                        start=dt.date(2018, 5, 2),
+                        end=dt.date(2020, 8, 13)):
+    '''
+    :param weight_df: values are portfolio weights, indices are dates (rows sum to 1), columns are tickers
+    :param ret_df: idem, but values are returns
+    :return: a dataframe with the portfolio return for each corresponding date
+    '''
+    mask_weight = (weight_df.index > start) & (weight_df.index <= end)
+    weight_df = weight_df.loc[mask_weight, :]
+    mask_ret = (ret_df.index > start) & (ret_df.index <= end)
+    ret_df = ret_df.loc[mask_ret, :]
+    portfolio_ret = pd.DataFrame().reindex_like(ret_df)
+    for ticker in ret_df.columns:
+        try:
+            weights = weight_df.loc[:, ticker]
+            rets = ret_df.loc[:, ticker]
+            ret_for_ticker = weights * rets.reindex(weights.index)
+            portfolio_ret[ticker] = ret_for_ticker
+        except Exception as e:
+            print("Error for {}: {}.".format(ticker, e))
+    return portfolio_ret.sum(axis=1)

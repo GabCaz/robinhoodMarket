@@ -16,6 +16,7 @@ def get_available_tickers(path="popularity_export/"):
     files = []
     for file in glob.glob("*.csv"):
         files.append(file)
+    os.chdir(ROOT_DIR)
     return files
 
 def merged_daily_usage_data(tickers, reload=False,
@@ -54,6 +55,7 @@ def merged_daily_usage_data(tickers, reload=False,
     data = pd.read_csv(file_name, parse_dates=True, index_col=['timestamp'])
     data.columns = data.columns.str.replace(".csv", "")
     data.index = [d.date() for d in data.index] # convert to date object
+    os.chdir(ROOT_DIR)
     return data
 
 def get_price_data(tickers,

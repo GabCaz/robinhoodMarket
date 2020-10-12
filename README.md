@@ -10,8 +10,10 @@ financial crisis are due to widespread amateur trading.
 Finally, we could create a representative portfolio for aggregated positions of robinhood traders, and analyze its risk properties. We can also investigate whether such a portfolio can serve as a risk factor.
 
 # Data sources
-Robintrack.net gives us the hour-by-hour number of users that own any particular stock at any given time, up to Aug 2020.
+* Robintrack.net gives us the hour-by-hour number of users that own any particular stock at any given time, up to Aug 2020.
 The data used for this project can be downloaded from https://robintrack.net/data-download.
+* Stock quotes are from Yahoo Finance API, accessed through Pandas DataReader.
+* Factors and Benchmarks used are from http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html.
 
 # Repository overview
 * The notebook `Study of Robinhood Market Impact for Risk Management` calls the relevent `.py` files. It summarizes our analysis.
